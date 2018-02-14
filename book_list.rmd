@@ -61,7 +61,7 @@ radioButtons(inputId = 'decade_choice',
              selected = 1990)
 
 searchInput(inputId = 'search_item',
-            label = 'Enter your search:',
+            label = h3('Enter your search:'),
             placeholder = 'This is a placeholder',
             btnSearch = icon('search'),
             btnReset = icon('remove'),
@@ -69,20 +69,54 @@ searchInput(inputId = 'search_item',
 )
 
 radioButtons(inputId = 'search_by', 
-             label = h3('Search Category'), 
+             label = 'Search Category', 
              choices = list('author', 'title', 'awards'),
              selected = 'author')
 
 checkboxGroupInput(inputId = 'order_by', 
-             label = h3('Order book list by:'), 
+             label = 'Order book list by:', 
              choices = list('ranking', 'year', 'title', 'author','avg_rating'),
              selected = 'ranking')
 ```
 
+Introduction
+=====================================  
+###  Great books with great stories always intrigue me. I am constantly in search of great books as my best companios for pastime. There are some apps available to recommend books based on your interests or provide some biased recommendation from expert. I want to find a list that is more neutral. \n
+
+### I found out the list of over 7,000 best books of 20th century on website [goodreads]( https://www.goodreads.com/list/show/6.Best_Books_of_the_20th_Century). The book rankings are based upon the votes by reader. In addition, it also includes the awards list that a specifi book received in the past century. 
+
+Row 
+-----------------------------------------------------------------------
+
+Dataset
+=====================================  
+
+### Dataset collected includes: 
+* #### ranking
+* #### year of publishing
+* #### book title
+* #### author
+* #### book pages
+* #### book description
+* #### average ratings
+* #### awards
+
+Row 
+-----------------------------------------------------------------------
+
 Trend
 =====================================  
 
-### Great books with great stories always intrigue me. I am constantly in search of great books as my best companios for pastime. I found out the list of best books of 20th century on website [goodreads]( https://www.goodreads.com/list/show/6.Best_Books_of_the_20th_Century). Majority of attributes related to the book list can be directly scraped from the web. I used web scrapy to retireve the book list. \n
+### The following two graph shows the top book list in each decade. It is surprising to know the top books were generated in a exponential growth pattern by decade. However, in each decade, the top books were evenly distributed by year.
+
+### The exception is the year 2000, as it is the book list for one year, instead of one decade. 
+
+### The top book distribution per year for each decade can be viewed by choosing the decade in the left panel. \n
+
+<br>
+
+Row 
+-----------------------------------------------------------------------
 
 
 ```{r Trend for century}
@@ -99,8 +133,6 @@ renderPlot({
 })
 br()
 ```
-
-### The trend shows expoential growth decade by decade except year 2000. As 2000 is only one year data, whileas the rest is ten-year data.
 
 Row 
 -----------------------------------------------------------------------
@@ -122,7 +154,9 @@ renderPlot({
 })
 ```
 
-### The top book distribution per year in each decade is evenly distributed.
+
+Row 
+-----------------------------------------------------------------------
 
 Search
 =====================================  
@@ -155,7 +189,13 @@ Conclusion
 
 ###  This project can provide the best book list reommendation in 20th century for interested readers, based on ranking, score, author, title and awards. However, the dataset does not contain the genre category which is important for the readers. The other important missing piece is price. This will be the future improvement. \n
 
-### I shall use selenium to scrape the web so dynamic information can be retrieved, like price.
+Row 
+-----------------------------------------------------------------------
+
+Takeaway
+===================================== 
+
+### During the web scraping process, I was puzzled by the limitations of web scrapy app. It cannot retrieve dynamic informaiton that was deemed important for this project. After some search and investigation, I found out selesium can be built on top of web scrapy framework. This way, you can take advantage of both the speed of web scrapy and dynamic feature of selenium. I shall use selenium together with web scrapy for the future web scraping project.
 
 Row 
 -----------------------------------------------------------------------
