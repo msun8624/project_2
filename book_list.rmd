@@ -82,7 +82,8 @@ checkboxGroupInput(inputId = 'order_by',
 Trend
 =====================================  
 
-### Great books with great stories always intrigue me. I am constantly in search of great books as my best companios for pastime. I found out the list of best books of 20th century on website [goodreads]( https://www.goodreads.com/list/show/6.Best_Books_of_the_20th_Century). Majority of attributes related to the book list can be directly scraped from the web. I used web scrapy to retireve the book list. 
+### Great books with great stories always intrigue me. I am constantly in search of great books as my best companios for pastime. I found out the list of best books of 20th century on website [goodreads]( https://www.goodreads.com/list/show/6.Best_Books_of_the_20th_Century). Majority of attributes related to the book list can be directly scraped from the web. I used web scrapy to retireve the book list. \n
+
 
 ```{r Trend for century}
 renderPlot({
@@ -99,6 +100,7 @@ renderPlot({
 br()
 ```
 
+### The trend shows expoential growth decade by decade except year 2000. As 2000 is only one year data, whileas the rest is ten-year data.
 
 Row 
 -----------------------------------------------------------------------
@@ -119,6 +121,8 @@ renderPlot({
         theme(plot.title = element_text(hjust = 0.5, size = 14)) 
 })
 ```
+
+### The top book distribution per year in each decade is evenly distributed.
 
 Search
 =====================================  
@@ -145,3 +149,13 @@ renderDataTable({
 })
 ```
 
+Conclusion
+=====================================  
+
+
+###  This project can provide the best book list reommendation in 20th century for interested readers, based on ranking, score, author, title and awards. However, the dataset does not contain the genre category which is important for the readers. The other important missing piece is price. This will be the future improvement. \n
+
+### I shall use selenium to scrape the web so dynamic information can be retrieved, like price.
+
+Row 
+-----------------------------------------------------------------------
