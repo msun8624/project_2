@@ -1,0 +1,147 @@
+---
+title: "Best books of 20th Century" 
+author: "- M.Sun - Feb. 11, 2018"
+# date: "Fubruary 11, 2018"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+#   social: menu
+#   source_code: embed
+runtime: shiny
+---
+
+```{r global}
+# load packages
+# devtools::install_github('rstudio/rmarkdown')
+library(flexdashboard)
+library(shinyWidgets)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(magrittr)
+library(stringr)
+
+book_list = read.csv('~/NYC_data_science/projects/project2/book_list/book_list.csv', 
+                     stringsAsFactors = F)
+book_list = book_list %>% select(ranking, year, title, author, pages, 
+                                      avg_rating, description, awards) %>%
+    filter(year>=1900 & year <2001) 
+
+# global function definition
+search_book <- function(pattern_str){
+    function(source_str){
+        str_detect(source_str, pattern = pattern_str)    
+    }
+}
+
+# global book search function
+# s_pattern: string pattern to be searched
+# column_name: list of string sources under column name
+# return: a list of books matching the search pattern,
+#         ordered by the year and alphabetical order of title
+return_books <- function(s_pattern, column_name){
+    search_str = search_book(tolower(s_pattern))
+    book_column = book_list %>% select(tolower(column_name))
+    book_column = sapply(book_column, tolower)
+    book_matched = sapply(book_column, search_str)
+    book_list_final = book_list %>% filter(book_matched) %>% arrange(year, title)
+    return(book_list_final)
+}
+
+```
+
+Sidebar {.sidebar}
+=====================================
+```{r global_sidebar}
+radioButtons(inputId = 'decade_choice', 
+             label = h3('Select Decade'), 
+             choices = list(1900, 1910, 1920, 1930, 1940, 1950, 
+                            1960, 1970, 1980, 1990),
+             selected = 1990)
+
+searchInput(inputId = 'search_item',
+            label = 'Enter your search:',
+            placeholder = 'This is a placeholder',
+            btnSearch = icon('search'),
+            btnReset = icon('remove'),
+            width = '100%'
+)
+
+radioButtons(inputId = 'search_by', 
+             label = h3('Search Category'), 
+             choices = list('author', 'title', 'awards'),
+             selected = 'author')
+
+checkboxGroupInput(inputId = 'order_by', 
+             label = h3('Order book list by:'), 
+             choices = list('ranking', 'year', 'title', 'author','avg_rating'),
+             selected = 'ranking')
+```
+
+Trend
+=====================================  
+
+### Great books with great stories always intrigue me. I am constantly in search of great books as my best companios for pastime. I found out the list of best books of 20th century on website [goodreads]( https://www.goodreads.com/list/show/6.Best_Books_of_the_20th_Century). Majority of attributes related to the book list can be directly scraped from the web. I used web scrapy to retireve the book list. 
+
+```{r Trend for century}
+renderPlot({
+    book_list_decade = book_list %>% select(year, title) %>% 
+        mutate(decade=floor((year %/% 10)*10)) %>%
+        group_by(decade) %>% summarise(numbers = length(decade))
+    ggplot(book_list_decade, aes(x=decade, y=numbers)) + 
+        geom_bar(stat = 'identity', fill = 'blue') +
+        xlab('Decades of 20th Century') +
+        ylab('Number of Books') + 
+        ggtitle('Book Distribution Trend for 20th Century') +
+        theme(plot.title = element_text(hjust = 0.5, size = 14)) 
+})
+br()
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+```{r Trend by decade}
+renderPlot({
+    book_list_year_decade = book_list %>% 
+        mutate(decade=floor((year %/% 10)*10)) %>% arrange(decade)
+    decade_selection = input$decade_choice
+    book_list_year_selection = book_list_year_decade %>%
+        filter(decade == decade_selection) %>% arrange(year) %>%
+        group_by(year) %>% dplyr::summarise(numbers = n())
+    ggplot(book_list_year_selection, aes(x=year, y=numbers)) + 
+        geom_bar(stat = 'identity', fill = 'blue') +
+        xlab(decade_selection) +
+        ylab('Number of Books') + 
+        ggtitle('Book Distribution Trend per Decade') +
+        theme(plot.title = element_text(hjust = 0.5, size = 14)) 
+})
+```
+
+Search
+=====================================  
+
+
+### Please select input from sidebar to search books of your interest
+
+```{r Data table for books}
+renderDataTable({
+    # search book list
+      if(!is.null(input$search_item)){
+          book_list_matched = return_books(input$search_item, input$search_by)
+      } else {
+          book_list_matched = book_list
+      }
+      
+    # # order books by the display order
+      if(!is.null(input$order_by)){
+          book_list_matched = book_list_matched %>% arrange_(.dots=input$order_by)
+      }
+    
+    # presented in datatable
+    datatable(book_list_matched,rownames = F)
+})
+```
+
